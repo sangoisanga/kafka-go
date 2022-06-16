@@ -1,0 +1,25 @@
+---
+version: '3.9'
+services:
+  consumer-mongo-db:
+    build:
+      context: consumer
+    environment:
+      mongoURL: 'mongodb://admin:admin@host.docker.internal:27017/?authSource=admin'
+      dbName: example_db
+      collectionName: example_coll
+      kafkaURL: kafka0:9092
+      topic: topic1
+      GroupID: mongo-group
+
+  producer-random:
+    build:
+      context: producer
+    environment:
+      kafkaURL: kafka0:9092
+      topic: topic1
+
+networks:
+  default:
+    name: kafka-net
+    external: true

@@ -1,0 +1,25 @@
+mongodbURI: "mongodb://admin:admin@localhost:27017/?authSource=admin"
+dBName: "example_db"
+kafkaURL: "localhost:9092"
+topic: "topic1"
+groupID: "mongo-group"
+
+backLogDB:
+  uri: "mongodb://admin:admin@localhost:27017/?authSource=admin"
+  dbName: "example_db"
+
+kafkaConfig:
+  - brokers:
+      - "localhost:9092"
+    topic: "topic1"
+    groupID: "mongo-group"
+    numOfConsumer: 2
+    retryStrategy: "back-log"
+    backLogCollection: "topic1-backlog"
+  - brokers:
+      - "localhost:9092"
+    topic: "topic1"
+    groupID: "mongo-group-1"
+    numOfConsumer: 2
+    retryStrategy: "dead-letter"
+    deadLetterAddress: "localhost:9092"
