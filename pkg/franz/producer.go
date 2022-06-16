@@ -3,6 +3,7 @@ package franz
 import (
 	"context"
 	"github.com/segmentio/kafka-go"
+	"kafka/pkg/interfaces"
 )
 
 type ProducerConfig struct {
@@ -10,12 +11,7 @@ type ProducerConfig struct {
 	Topic   string
 }
 
-type Producer interface {
-	Write(ctx context.Context, message kafka.Message) error
-	Close()
-}
-
-func NewProducer(config ProducerConfig) Producer {
+func NewProducer(config ProducerConfig) interfaces.Producer {
 	w := &kafka.Writer{
 		Addr:                   kafka.TCP(config.Address),
 		Topic:                  config.Topic,
@@ -29,10 +25,11 @@ type producer struct {
 	writer *kafka.Writer
 }
 
-func (p *producer) Close() {
+func (p *producer) Close() error {
 	if p.writer != nil {
-		p.writer.Close()
+		return p.writer.Close()
 	}
+	return nil
 }
 
 func (p *producer) Write(ctx context.Context, message kafka.Message) error {

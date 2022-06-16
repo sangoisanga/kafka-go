@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"github.com/segmentio/kafka-go"
 	"go.uber.org/zap"
+	"kafka/pkg/interfaces"
 	"kafka/pkg/services/logger"
 )
 
-func NewClient(groups []*Group) *client {
+func NewClient(groups []*Group) interfaces.Client {
 	return &client{groups: groups}
 }
 

@@ -1,4 +1,4 @@
-package franz
+package retry
 
 import (
 	"context"

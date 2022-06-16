@@ -1,4 +1,4 @@
-package franz
+package retry
 
 import (
 	"context"
@@ -10,12 +10,12 @@ import (
 	"time"
 )
 
-func DeadLetterStrategy(producer Producer) interfaces.RetryStrategy {
+func DeadLetterStrategy(producer interfaces.Producer) interfaces.RetryStrategy {
 	return &deadLetter{producer: producer}
 }
 
 type deadLetter struct {
-	producer Producer
+	producer interfaces.Producer
 }
 
 func (d deadLetter) Retry(ctx context.Context, message kafka.Message) error {

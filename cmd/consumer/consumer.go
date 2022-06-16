@@ -1,11 +1,6 @@
 package main
 
 import (
-	"context"
-	kafka "github.com/segmentio/kafka-go"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.uber.org/zap"
 	"kafka/pkg/franz"
 	"kafka/pkg/repositories"
 	"kafka/pkg/services/config"
@@ -13,36 +8,6 @@ import (
 	"os"
 	"os/signal"
 )
-
-func getMongoCollection(mongoURL, dbName, collectionName string) *mongo.Collection {
-	option := options.Client().ApplyURI(mongoURL)
-	client, err := mongo.Connect(context.Background(), option)
-	if err != nil {
-		logger.I.Error("connect db error", zap.Error(err))
-	}
-
-	// Check the connection
-	err = client.Ping(context.Background(), nil)
-	if err != nil {
-		logger.I.Error("ping error", zap.Error(err))
-	}
-
-	logger.I.Info("Connected to MongoDB ... !!")
-
-	db := client.Database(dbName)
-	collection := db.Collection(collectionName)
-	return collection
-}
-
-func getKafkaReader(kafkaURL, topic, groupID string) *kafka.Reader {
-	return kafka.NewReader(kafka.ReaderConfig{
-		Brokers:  []string{kafkaURL},
-		GroupID:  groupID,
-		Topic:    topic,
-		MinBytes: 10e3, // 10KB
-		MaxBytes: 10e6, // 10MB
-	})
-}
 
 func main() {
 	logger.Init()

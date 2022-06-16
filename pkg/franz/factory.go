@@ -2,12 +2,14 @@ package franz
 
 import (
 	"fmt"
+	"kafka/pkg/franz/handler"
+	"kafka/pkg/franz/retry"
 	"kafka/pkg/interfaces"
 	"kafka/pkg/models"
 	"kafka/pkg/repositories"
 )
 
-func Factory(db repositories.Database) *factory {
+func Factory(db repositories.Database) interfaces.Factory {
 	return &factory{dbInstance: db}
 }
 
@@ -20,7 +22,7 @@ const DeadLetterPostfix = "dead-letter"
 func (f *factory) GetConsumerHandler(topic string) interfaces.ConsumerHandler {
 	switch topic {
 	case "topic1":
-		return PrintLogHandler()
+		return handler.PrintLogHandler()
 	default:
 		panic("undefined handler")
 	}
@@ -35,11 +37,11 @@ func (f *factory) GetRetryStrategy(config *models.KafkaGroupConfig) interfaces.R
 			Topic:   topic,
 		}
 		producer := NewProducer(producerConfig)
-		return DeadLetterStrategy(producer)
+		return retry.DeadLetterStrategy(producer)
 
 	case "back-log":
 		repo := repositories.BackLogRepository(f.dbInstance, config.BackLogCollection)
-		return BackLogStrategy(repo)
+		return retry.BackLogStrategy(repo)
 
 	default:
 		panic("undefined strategy")

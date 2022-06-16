@@ -1,4 +1,4 @@
-package franz
+package handler
 
 import (
 	"context"
@@ -17,7 +17,7 @@ func PrintLogHandler() interfaces.ConsumerHandler {
 type printLogHandler struct {
 }
 
-func (p printLogHandler) Consume(ctx context.Context, message kafka.Message) (retry bool, err error) {
+func (p printLogHandler) Consume(_ context.Context, message kafka.Message) (retry bool, err error) {
 	bytes, err := json.Marshal(message)
 	if err != nil {
 		return true, err
