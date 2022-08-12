@@ -1,4 +1,4 @@
-module kafka
+module github.com/sangoisanga/kafka-go
 
 go 1.18
 
