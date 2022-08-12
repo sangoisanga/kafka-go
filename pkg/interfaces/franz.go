@@ -2,8 +2,8 @@ package interfaces
 
 import (
 	"context"
+	"github.com/sangoisanga/kafka-go/pkg/models"
 	"github.com/segmentio/kafka-go"
-	"kafka/pkg/models"
 )
 
 type ConsumerHandler interface {

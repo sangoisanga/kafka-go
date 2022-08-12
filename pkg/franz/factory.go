@@ -2,11 +2,11 @@ package franz
 
 import (
 	"fmt"
-	"kafka/pkg/franz/handler"
-	"kafka/pkg/franz/retry"
-	"kafka/pkg/interfaces"
-	"kafka/pkg/models"
-	"kafka/pkg/repositories"
+	"github.com/sangoisanga/kafka-go/pkg/franz/handler"
+	"github.com/sangoisanga/kafka-go/pkg/franz/retry"
+	"github.com/sangoisanga/kafka-go/pkg/interfaces"
+	"github.com/sangoisanga/kafka-go/pkg/models"
+	"github.com/sangoisanga/kafka-go/pkg/repositories"
 )
 
 func Factory(db repositories.Database) interfaces.Factory {

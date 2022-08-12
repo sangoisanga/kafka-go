@@ -2,8 +2,8 @@ package franz
 
 import (
 	"context"
+	"github.com/sangoisanga/kafka-go/pkg/interfaces"
 	"github.com/segmentio/kafka-go"
-	"kafka/pkg/interfaces"
 )
 
 type ProducerConfig struct {

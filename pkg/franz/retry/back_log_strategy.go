@@ -2,8 +2,8 @@ package retry
 
 import (
 	"context"
+	"github.com/sangoisanga/kafka-go/pkg/interfaces"
 	"github.com/segmentio/kafka-go"
-	"kafka/pkg/interfaces"
 )
 
 func BackLogStrategy(repo interfaces.BackLogRepository) interfaces.RetryStrategy {

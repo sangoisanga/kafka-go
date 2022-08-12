@@ -1,16 +1,17 @@
 package main
 
 import (
-	"kafka/pkg/franz"
-	"kafka/pkg/repositories"
-	"kafka/pkg/services/config"
-	"kafka/pkg/services/logger"
+	"github.com/sangoisanga/core-go/pkg/log"
+	"github.com/sangoisanga/kafka-go/pkg/franz"
+	"github.com/sangoisanga/kafka-go/pkg/repositories"
+	"github.com/sangoisanga/kafka-go/pkg/services/config"
 	"os"
 	"os/signal"
 )
 
 func main() {
-	logger.Init()
+	log.InitLogger()
+	logger := log.Logger()
 	configs := config.Load()
 
 	mongoClient, err := repositories.CreateNewClient(configs.MongodbURI)
@@ -21,7 +22,7 @@ func main() {
 	backLogDB := repositories.Database{Client: mongoClient, DBName: configs.BackLogDB.DBName}
 	franzFactory := franz.Factory(backLogDB)
 
-	logger.I.Info("init consumer")
+	logger.Info("init consumer")
 	groups := make([]*franz.Group, 0, len(configs.KafkaConfig))
 	for _, groupConfig := range configs.KafkaConfig {
 		group := &franz.Group{
@@ -41,5 +42,5 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
-	logger.I.Info("exiting ...")
+	logger.Info("exiting ...")
 }

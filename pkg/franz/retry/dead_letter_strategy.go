@@ -3,10 +3,10 @@ package retry
 import (
 	"context"
 	"errors"
+	"github.com/sangoisanga/core-go/pkg/log"
+	"github.com/sangoisanga/kafka-go/pkg/interfaces"
 	"github.com/segmentio/kafka-go"
 	"go.uber.org/zap"
-	"kafka/pkg/interfaces"
-	"kafka/pkg/services/logger"
 	"time"
 )
 
@@ -19,6 +19,7 @@ type deadLetter struct {
 }
 
 func (d deadLetter) Retry(ctx context.Context, message kafka.Message) error {
+	logger := log.Logger()
 	var err error
 	retries := 3
 	for i := 0; i < retries; i++ {
@@ -31,7 +32,7 @@ func (d deadLetter) Retry(ctx context.Context, message kafka.Message) error {
 			continue
 		}
 		if err != nil {
-			logger.I.Error("write fail", zap.Error(err))
+			logger.Error("write fail", zap.Error(err))
 		}
 	}
 	return err

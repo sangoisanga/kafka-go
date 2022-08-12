@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/sangoisanga/core-go/pkg/log"
+	"github.com/sangoisanga/kafka-go/pkg/interfaces"
 	"github.com/segmentio/kafka-go"
-	"kafka/pkg/interfaces"
-	"kafka/pkg/services/logger"
 	"time"
 )
 
@@ -18,11 +18,12 @@ type printLogHandler struct {
 }
 
 func (p printLogHandler) Consume(_ context.Context, message kafka.Message) (retry bool, err error) {
+	logger := log.Logger()
 	bytes, err := json.Marshal(message)
 	if err != nil {
 		return true, err
 	}
-	logger.I.Info(string(bytes))
+	logger.Info(string(bytes))
 
 	if time.Now().Second()%2 == 0 {
 		return true, errors.New("error is real")

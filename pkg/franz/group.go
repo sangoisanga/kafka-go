@@ -1,6 +1,6 @@
 package franz
 
-import "kafka/pkg/interfaces"
+import "github.com/sangoisanga/kafka-go/pkg/interfaces"
 
 type Group struct {
 	Brokers        []string

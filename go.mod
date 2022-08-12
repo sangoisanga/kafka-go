@@ -4,10 +4,11 @@ go 1.18
 
 require (
 	github.com/google/uuid v1.3.0
+	github.com/sangoisanga/core-go v0.0.0-20220812082027-99d775f114f2
 	github.com/segmentio/kafka-go v0.4.32
 	go.mongodb.org/mongo-driver v1.9.1
 	go.uber.org/zap v1.21.0
-	gopkg.in/yaml.v3 v3.0.0-20220512140231-539c8e751b99
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (

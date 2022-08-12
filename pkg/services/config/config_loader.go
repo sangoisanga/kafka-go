@@ -2,9 +2,9 @@ package config
 
 import (
 	"fmt"
+	"github.com/sangoisanga/kafka-go/pkg/models"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
-	"kafka/pkg/models"
 	"sync"
 )
 

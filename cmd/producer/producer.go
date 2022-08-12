@@ -3,11 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/sangoisanga/core-go/pkg/log"
+	"github.com/sangoisanga/kafka-go/pkg/franz"
+	"github.com/sangoisanga/kafka-go/pkg/interfaces"
+	"github.com/sangoisanga/kafka-go/pkg/services/config"
 	"go.uber.org/zap"
-	"kafka/pkg/franz"
-	"kafka/pkg/interfaces"
-	"kafka/pkg/services/config"
-	"kafka/pkg/services/logger"
 	"time"
 
 	"github.com/google/uuid"
@@ -15,7 +15,8 @@ import (
 )
 
 func main() {
-	logger.Init()
+	log.InitLogger()
+	logger := log.Logger()
 	configs := config.Load()
 	producer := franz.NewProducer(franz.ProducerConfig{
 		Address: configs.KafkaURL,
@@ -25,11 +26,11 @@ func main() {
 	defer func(producer interfaces.Producer) {
 		err := producer.Close()
 		if err != nil {
-			logger.I.Error("closing writer error", zap.Error(err))
+			logger.Error("closing writer error", zap.Error(err))
 		}
 	}(producer)
 
-	logger.I.Info("start producing ... !!")
+	logger.Info("start producing ... !!")
 	for i := 0; ; i++ {
 		key := fmt.Sprintf("Key-%d", i)
 		msg := kafka.Message{
@@ -38,9 +39,9 @@ func main() {
 		}
 		err := producer.Write(context.Background(), msg)
 		if err != nil {
-			logger.I.Error("write error", zap.Error(err))
+			logger.Error("write error", zap.Error(err))
 		} else {
-			logger.I.Info(fmt.Sprintf("produced %s", key))
+			logger.Info(fmt.Sprintf("produced %s", key))
 		}
 		time.Sleep(1 * time.Second)
 	}

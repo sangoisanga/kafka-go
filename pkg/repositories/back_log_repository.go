@@ -2,8 +2,8 @@ package repositories
 
 import (
 	"context"
+	"github.com/sangoisanga/kafka-go/pkg/interfaces"
 	"github.com/segmentio/kafka-go"
-	"kafka/pkg/interfaces"
 )
 
 func BackLogRepository(dbInstance Database, collectionName string) interfaces.BackLogRepository {
