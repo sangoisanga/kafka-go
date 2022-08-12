@@ -10,8 +10,10 @@ import (
 )
 
 func main() {
-	log.InitLogger()
-	logger := log.Logger()
+	logger, err := log.InitLogger()
+	if err != nil {
+		panic(err)
+	}
 	configs := config.Load()
 
 	mongoClient, err := repositories.CreateNewClient(configs.MongodbURI)

@@ -15,8 +15,10 @@ import (
 )
 
 func main() {
-	log.InitLogger()
-	logger := log.Logger()
+	logger, err := log.InitLogger()
+	if err != nil {
+		panic(err)
+	}
 	configs := config.Load()
 	producer := franz.NewProducer(franz.ProducerConfig{
 		Address: configs.KafkaURL,
