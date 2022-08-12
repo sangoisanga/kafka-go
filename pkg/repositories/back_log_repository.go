@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"context"
-	"github.com/sangoisanga/kafka-go/pkg/interfaces"
+	"github.com/sangoisanga/kafka-go/interfaces"
 	"github.com/segmentio/kafka-go"
 )
 

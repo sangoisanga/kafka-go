@@ -2,9 +2,9 @@ package franz
 
 import (
 	"fmt"
+	"github.com/sangoisanga/kafka-go/interfaces"
 	"github.com/sangoisanga/kafka-go/pkg/franz/handler"
 	"github.com/sangoisanga/kafka-go/pkg/franz/retry"
-	"github.com/sangoisanga/kafka-go/pkg/interfaces"
 	"github.com/sangoisanga/kafka-go/pkg/models"
 	"github.com/sangoisanga/kafka-go/pkg/repositories"
 )

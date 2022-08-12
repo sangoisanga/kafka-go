@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/sangoisanga/core-go/pkg/log"
-	"github.com/sangoisanga/kafka-go/pkg/interfaces"
+	"github.com/sangoisanga/kafka-go/interfaces"
 	"github.com/segmentio/kafka-go"
 	"go.uber.org/zap"
 	"time"
