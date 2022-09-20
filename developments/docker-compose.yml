@@ -23,6 +23,7 @@ services:
   zookeeper0:
     image: confluentinc/cp-zookeeper:5.2.4
     environment:
+      ZOOKEEPER_SASL_ENABLED: "false"
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     ports:
@@ -36,14 +37,20 @@ services:
       - "9092:9092"
       - "9997:9997"
     environment:
-      KAFKA_BROKER_ID: 1
+      ZOOKEEPER_SASL_ENABLED: "false"
+      KAFKA_LISTENERS: PLAINTEXT://kafka0:29092,OUTSIDE://:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka0:29092,OUTSIDE://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,OUTSIDE:SASL_PLAINTEXT
       KAFKA_ZOOKEEPER_CONNECT: zookeeper0:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka0:29092,PLAINTEXT_HOST://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_OPTS: "-Djava.security.auth.login.config=/etc/kafka/kafka_server_jaas.conf"
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       JMX_PORT: 9997
       KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka0 -Dcom.sun.management.jmxremote.rmi.port=9997
+    volumes:
+      - ./kafka_server_jaas.conf:/etc/kafka/kafka_server_jaas.conf
 
   schema-registry0:
     image: confluentinc/cp-schema-registry:5.5.0
@@ -88,13 +95,13 @@ services:
       CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect0
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
 
-  kafka-init-topics:
-    image: confluentinc/cp-kafka:5.3.1
-    depends_on:
-      - kafka0
-    command: "bash -c 'echo Waiting for Kafka to be ready... && \
-               cub kafka-ready -b kafka0:29092 1 30 && \
-               kafka-topics --create --topic topic1 --partitions 3 --replication-factor 1 --if-not-exists --zookeeper zookeeper0:2181'"
+#  kafka-init-topics:
+#    image: confluentinc/cp-kafka:5.3.1
+#    depends_on:
+#      - kafka0
+#    command: "bash -c 'echo Waiting for Kafka to be ready... && \
+#               cub kafka-ready -b kafka0:29092 1 30 && \
+#               kafka-topics --create --topic topic1 --partitions 3 --replication-factor 1 --if-not-exists --zookeeper zookeeper0:2181'"
 networks:
   default:
     name: kafka-net
