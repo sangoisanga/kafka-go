@@ -1,24 +1,22 @@
 ---
 version: '3.9'
 services:
-  kafka-ui:
-    container_name: kafka-ui
-    image: provectuslabs/kafka-ui:latest
+  redpanda-console:
+    container_name: redpanda-console
+    image: docker.redpanda.com/vectorized/console:latest
     ports:
       - "9080:8080"
     depends_on:
       - zookeeper0
       - kafka0
-      - schema-registry0
-      - kafka-connect0
+    restart: on-failure
+    entrypoint: /bin/sh
+    command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
     environment:
-      KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka0:29092
-      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper0:2181
-      KAFKA_CLUSTERS_0_JMXPORT: 9997
-      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry0:9085
-      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
-      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect0:9083
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["kafka0:29092"]
 
   zookeeper0:
     image: confluentinc/cp-zookeeper:5.2.4
@@ -52,49 +50,6 @@ services:
     volumes:
       - ./kafka_server_jaas.conf:/etc/kafka/kafka_server_jaas.conf
 
-  schema-registry0:
-    image: confluentinc/cp-schema-registry:5.5.0
-    ports:
-      - "9085:9085"
-    depends_on:
-      - zookeeper0
-      - kafka0
-    environment:
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka0:29092
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper0:2181
-      SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: PLAINTEXT
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry0
-      SCHEMA_REGISTRY_LISTENERS: http://schema-registry0:9085
-
-      SCHEMA_REGISTRY_SCHEMA_REGISTRY_INTER_INSTANCE_PROTOCOL: "http"
-      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: INFO
-      SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
-
-  kafka-connect0:
-    image: confluentinc/cp-kafka-connect:6.0.1
-    ports:
-      - "9083:9083"
-    depends_on:
-      - kafka0
-      - schema-registry0
-    environment:
-      CONNECT_BOOTSTRAP_SERVERS: kafka0:29092
-      CONNECT_GROUP_ID: compose-connect-group
-      CONNECT_CONFIG_STORAGE_TOPIC: _connect_configs
-      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_OFFSET_STORAGE_TOPIC: _connect_offset
-      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_STATUS_STORAGE_TOPIC: _connect_status
-      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
-      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry0:9085
-      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.storage.StringConverter
-      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry0:9085
-      CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
-      CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
-      CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect0
-      CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
-
 #  kafka-init-topics:
 #    image: confluentinc/cp-kafka:5.3.1
 #    depends_on:
@@ -106,3 +61,4 @@ networks:
   default:
     name: kafka-net
     external: true
+    # $ docker network create kafka-net
